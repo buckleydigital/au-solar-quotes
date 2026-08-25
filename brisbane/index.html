@@ -884,6 +884,11 @@ async function submitForm(){
     })
   }).catch(function(e){ console.warn('capture:',e); });
   track('generate_lead', { matched: !!fd.matched_buyer });
+  /* Meta Pixel conversion. Fires for every genuine lead - matched or held for
+     coverage alike. Whether an installer currently rents the area is a delivery
+     question, not a conversion one, so it must never gate the pixel. Guarded so
+     a blocked/absent fbq is a silent no-op. */
+  try{ if(typeof fbq==='function') fbq('track','Lead',{content_category:NICHE, content_name:BRAND_NAME, matched: !!fd.matched_buyer}); }catch(e){}
   }
   showSuccess();
 }
