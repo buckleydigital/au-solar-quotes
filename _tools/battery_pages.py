@@ -370,6 +370,11 @@ def hero_copy(brand, R, national):
            'installer who can quote now and install while the current rate applies.' % (CUT_PCT, where))
     sub_after = ('The federal battery discount steps down every six months until 2030. Answer five quick questions and we&#39;ll '
                  'match you with one accredited %s battery installer for an itemised quote.' % where)
+    if brand == 'au-solar-quotes':
+        sub = ('The federal battery discount drops about %d%% on 1 January 2027, and your installation date sets the rate. '
+               'Get one itemised quote from an accredited %s battery installer now.' % (CUT_PCT, where))
+        sub_after = ('Get one itemised quote from an accredited %s battery installer, with the federal discount '
+                     'shown on the quote.' % where)
     eyebrow = 'Federal battery discount drops 1 January 2027'
     eyebrow_after = 'Federal battery discount steps down again 1 July 2027'
     return dict(h1=h1, h1_after=h1_after, sub=sub, sub_after=sub_after, eyebrow=eyebrow, eyebrow_after=eyebrow_after)
@@ -489,8 +494,10 @@ def body_sections(brand, slug, R, state, net, national, region_links):
   </div>
 </div></section>''' % (pull, esc(dl_h2_after), dl_h2, esc(dl_p_after), dl_p, CUT_PCT))
 
-    # 2. rebate education
-    out.append('''<!-- REBATE EXPLAINED -->
+    # 2. rebate education (au-solar-quotes leaves it out: the deadline card,
+    #    calculator and FAQ already cover it, and it repeats on every page)
+    tight = brand == 'au-solar-quotes'
+    if not tight: out.append('''<!-- REBATE EXPLAINED -->
 <section class="sec bt-band" id="rebate"><div class="wrap">
   <div class="sec-head mid">
     <div class="sec-eyebrow">The battery rebate, explained - October 2026</div>
@@ -543,8 +550,8 @@ def body_sections(brand, slug, R, state, net, national, region_links):
   </div>
 </div></section>''' % STC_PRICE)
 
-    # 4. is it worth it + sizing
-    out.append('''<!-- WORTH IT -->
+    # 4. is it worth it + sizing (left out on au-solar-quotes, as above)
+    if not tight: out.append('''<!-- WORTH IT -->
 <section class="sec bt-band" id="worth"><div class="wrap">
   <div class="sec-head mid">
     <div class="sec-eyebrow">Straight talk</div>
@@ -646,7 +653,7 @@ def body_sections(brand, slug, R, state, net, national, region_links):
 </div></section>''' % (R, R, incentive, '\n    '.join(items)))
 
     # 7. FAQ
-    faqs = general_faqs() + local_faqs
+    faqs = general_faqs(brand) + local_faqs
     out.append('''<!-- FAQ -->
 <section class="sec" id="faq"><div class="wrap">
   <div class="sec-head mid">
@@ -673,8 +680,8 @@ def body_sections(brand, slug, R, state, net, national, region_links):
     return '\n\n'.join(out), faqs
 
 
-def general_faqs():
-    return [
+def general_faqs(brand=None):
+    faqs = [
         ('When exactly does the battery rebate drop?',
          'On 1 January 2027 the federal discount falls from %s to %s certificates per kWh of usable capacity - about %d%% less. It steps down again to %s on 1 July 2027 and keeps falling every six months until the program ends in 2030. '
          'The rate is set by the date your battery is <strong>installed</strong>, not the date you sign.' % (FACTOR_NOW, FACTOR_JAN, CUT_PCT, FACTOR_JUL)),
@@ -694,6 +701,11 @@ def general_faqs():
         ('What if nobody covers my postcode yet?',
          'We still take your details and match you as soon as an accredited battery installer covers your area. We will not pass your number around to fill the gap.'),
     ]
+    if brand == 'au-solar-quotes':
+        faqs[-1] = ('What if nobody covers my postcode yet?',
+                    'We check before you give us any contact details. If no accredited battery installer covers your postcode yet, '
+                    'we tell you straight away - we will not pass your number around to fill the gap.')
+    return faqs
 
 
 def jsonld(brand, domain, brand_name, slug, R, state, faqs, national):
@@ -770,9 +782,13 @@ def build(brand, src_html, slug, national):
     h = rep('</head>', BT_CSS.replace('__RADIUS__', cfg['radius']) + '</head>', h)
 
     # ---- header nav + banner ----
-    h = sub1(r'<nav class="navlinks">.*?</nav>',
-             '<nav class="navlinks">\n      <a href="#rebate">The rebate</a>\n      <a href="#calc">Calculator</a>\n'
-             '      <a href="#worth">Worth it?</a>\n      <a href="#faq">FAQ</a>\n      <a href="/">Solar quotes</a>\n    </nav>', h)
+    if brand == 'au-solar-quotes':
+        nav = ('<nav class="navlinks">\n      <a href="#calc">Calculator</a>\n      <a href="#how">How it works</a>\n'
+               '      <a href="#faq">FAQ</a>\n      <a href="/">Solar quotes</a>\n    </nav>')
+    else:
+        nav = ('<nav class="navlinks">\n      <a href="#rebate">The rebate</a>\n      <a href="#calc">Calculator</a>\n'
+               '      <a href="#worth">Worth it?</a>\n      <a href="#faq">FAQ</a>\n      <a href="/">Solar quotes</a>\n    </nav>')
+    h = sub1(r'<nav class="navlinks">.*?</nav>', nav, h)
     banner = ('<div class="bt-banner" data-bt-after="The federal battery discount steps down again on 1 July 2027. '
               '&lt;a href=&quot;#quote&quot;&gt;Get an itemised quote&lt;/a&gt;">'
               'Federal battery discount drops ~%d%% on 1 January 2027 - <b data-bt-days>--</b> days left. '
@@ -790,7 +806,11 @@ def build(brand, src_html, slug, national):
         'One accredited battery installer for your postcode, never resold',
         'Free, obligation-free quote with the rebate itemised',
     ]
-    h = sub1(r'(<div class="ticks">)(.*?)(\n\s*</div>\n\s*<div class="trust-pills">)',
+    if brand == 'au-solar-quotes':
+        ticks = ['Keep the current discount - your install date sets it',
+                 'One accredited installer per postcode - never resold',
+                 'Free quote with the rebate itemised']
+    h = sub1(r'(<div class="ticks">)(.*?)(\n\s*</div>\n\s*(?:<div class="trust-pills">|</div>))',
              lambda m: m.group(1) + ''.join('\n        <div class="tick">%s %s</div>' % (TICK_OK, t) for t in ticks) + m.group(3), h)
     h = sub1(r'(<div class="card-head">\s*<div class="t">)[^<]*(</div>\s*<div class="s">)[^<]*(</div>)',
              lambda m: m.group(1) + 'Get your free battery quote' + m.group(2).replace('<div class="s">', '<div class="s" data-bt-after="Under a minute - matched to your area">') + 'Under a minute - before the 1 January rebate cut' + m.group(3), h)

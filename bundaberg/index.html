@@ -364,6 +364,17 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
   .mobile-cta.hide{transform:translateY(140%);opacity:0;pointer-events:none}
   .mobile-cta{background:var(--go) !important;color:var(--ink) !important;border-radius:999px !important}
 
+  /* battery pages: their own sheet loads later, so these need the extra 'body' weight */
+  body .bt-btn{background:var(--go);color:var(--ink) !important;border-radius:999px;box-shadow:0 10px 24px -12px rgba(var(--glow),1)}
+  body .bt-btn:hover{background:var(--go-d)}
+  body .bt-deadline{border-radius:var(--r-lg);border:1px solid rgba(var(--glow),.55);box-shadow:0 0 50px -18px rgba(var(--glow),.55),0 20px 40px -30px rgba(6,20,15,.5)}
+  body .bt-count div{border-radius:10px}
+  body .bt-stats,body .bt-steps{gap:14px;border:none;overflow:visible;background:none}
+  body .bt-stats>div,body .bt-steps>div{background:#fff;border:1px solid var(--line) !important;border-radius:var(--r-lg);box-shadow:0 12px 30px -24px rgba(6,20,15,.45)}
+  body .bt-steps>div::before{content:'';display:block;width:36px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--go));margin-bottom:16px}
+  body .bt-steps .n{color:var(--accent);padding:0;border:0 !important}
+  body .bt-calc{border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:0 18px 40px -30px rgba(6,20,15,.5)}
+  body .bt-card,body .bt-areas a{border-radius:var(--r-lg)}
   @media(max-width:960px){
     /* form first on phones: headline, one line, then the card */
     .hero-copy{display:contents}
@@ -404,7 +415,6 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
     <nav class="navlinks">
       <a href="#how">How it works</a>
       <a href="#costs">What it costs</a>
-      <a href="#rebates">Rebates</a>
       <a href="#faq">FAQ</a>
     </nav>
     <a href="#quote" class="cta">Get my quote</a>
@@ -415,17 +425,12 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
   <div class="hero-grid">
     <div class="hero-copy">
       <span class="eyebrow"><span class="dot"></span> Matched to accredited Bundaberg installers</span>
-      <h1><span class="hl">Bundaberg</span> solar quotes, done properly.</h1>
-      <p class="sub">Bundaberg solar, matched to a local accredited installer who actually covers your postcode. Answer four quick questions and we'll match you with a single accredited installer covering your postcode. No spam, no reselling your details.</p>
+      <h1><span class="hl">Bundaberg</span> solar quotes from one local installer.</h1>
+      <p class="sub">Answer four quick questions and we'll match you with the accredited Bundaberg installer who covers your postcode. Your details go to them and no one else.</p>
       <div class="ticks">
-        <div class="tick"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> One installer, matched to your postcode - never resold to five companies</div>
-        <div class="tick"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> Qualified electricians and accredited installers only</div>
-        <div class="tick"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> Free, obligation-free, and no lock-in</div>
-      </div>
-      <div class="trust-pills">
-        <span class="trust-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> Accredited installers</span>
-        <span class="trust-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> Details never resold</span>
-        <span class="trust-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> Australian mobile verified</span>
+        <div class="tick"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> One installer per postcode - never resold</div>
+        <div class="tick"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> Accredited installers and licensed electricians only</div>
+        <div class="tick"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg> Free and obligation-free</div>
       </div>
     </div>
 
@@ -433,7 +438,7 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
     <div class="survey-card" id="quote">
       <div class="card-head">
         <div class="t">Get your free solar quote</div>
-        <div class="s">Under a minute - matched to your area</div>
+        <div class="s">About 60 seconds - matched to your postcode</div>
       </div>
       <div class="survey-progress">
         <div class="progbar"><i id="progFill"></i></div>
@@ -531,98 +536,13 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
 <section class="sec" id="how"><div class="wrap">
   <div class="sec-head">
     <div class="sec-eyebrow">How it works</div>
-    <h2 class="sec-title">Three steps, no call-centre run-around</h2>
-    <p class="sec-sub">Most quote sites sell your number to whoever pays. We match you to one installer and stop there.</p>
+    <h2 class="sec-title">Matched in three steps</h2>
+    <p class="sec-sub">Most quote sites sell your number to several installers. We match you with one.</p>
   </div>
   <div class="rail">
-    <div class="r"><div class="num">Step 01</div><h3>Tell us about your home</h3><p>Four quick questions: whether you own the place, your quarterly bill, your timeframe and your postcode. No account, no upload.</p></div>
-    <div class="r"><div class="num">Step 02</div><h3>We match your postcode</h3><p>We check which accredited installer actually covers your area and match you to that one business. If nobody covers you yet, we say so instead of wasting your time.</p></div>
-    <div class="r"><div class="num">Step 03</div><h3>Get your free quote</h3><p>Your matched installer contacts you directly, usually within one business day, with an obligation-free quote for your roof.</p></div>
-  </div>
-</div></section>
-
-<!-- WHAT DRIVES THE COST (depth) -->
-<section class="sec alt" id="costs"><div class="wrap">
-  <div class="sec-head">
-    <div class="sec-eyebrow">What it costs</div>
-    <h2 class="sec-title">What actually moves the number on your quote</h2>
-    <p class="sec-sub">Nobody can price your roof from a web page, and any site that gives you a firm figure before seeing it is guessing. These are the things your installer is actually pricing.</p>
-  </div>
-  <table class="dtable">
-    <caption>Typical residential sizing. Your installer confirms the right system for your roof, usage and switchboard.</caption>
-    <thead><tr><th scope="col">Quarterly bill</th><th scope="col">System size usually discussed</th><th scope="col">What it tends to suit</th></tr></thead>
-    <tbody>
-      <tr><td>Under $300</td><td>3 - 5 kW</td><td>Smaller households, low daytime use, unit or townhouse roofs</td></tr>
-      <tr><td>$300 - $600</td><td>5 - 6.6 kW</td><td>The most common family-home range in Australia</td></tr>
-      <tr><td>$600 - $1,000</td><td>6.6 - 10 kW</td><td>Larger homes, pool pumps, ducted air conditioning</td></tr>
-      <tr><td>Over $1,000</td><td>10 kW+ or solar plus battery</td><td>High daytime use, electric vehicles, home offices, acreage</td></tr>
-    </tbody>
-  </table>
-  <div style="margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff" class="assure">
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Roof and orientation.</strong> North-facing gets the most output, but east-west splits often suit households using power morning and evening.</span></div>
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Panel and inverter tier.</strong> The gap between budget and premium components is mostly warranty length and degradation rate, not day-one output.</span></div>
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Switchboard and wiring.</strong> Older boards sometimes need an upgrade before an install can be signed off. Worth asking about upfront.</span></div>
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Access and storeys.</strong> Two-storey, tile, or tight-access roofs take longer to install and that shows up in the labour line.</span></div>
-  </div>
-</div></section>
-
-<!-- REBATES (depth) -->
-<section class="sec" id="rebates"><div class="wrap">
-  <div class="sec-head">
-    <div class="sec-eyebrow">Rebates &amp; incentives</div>
-    <h2 class="sec-title">How the incentives usually work</h2>
-    <p class="sec-sub">Programs and amounts change, and eligibility depends on your property. This is the shape of it - your matched installer confirms exactly what applies to you, in writing, as part of the quote.</p>
-  </div>
-  <div class="why-grid">
-    <div class="why-card"><div class="why-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>Applied at the quote</h3><p>The federal small-scale incentive is almost always taken off the price upfront by the installer, rather than claimed back by you later.</p></div>
-    <div class="why-card"><div class="why-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M12 3v18"/></svg></div><h3>It varies by location</h3><p>The value is tied to how much energy a system is expected to generate where you live, so the same system is worth a different amount in different parts of the country.</p></div>
-    <div class="why-card"><div class="why-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div><h3>It steps down over time</h3><p>The federal scheme reduces on a set schedule, so the incentive attached to an install is generally worth less each year it is put off.</p></div>
-    <div class="why-card"><div class="why-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>Accreditation is the gate</h3><p>Incentives only apply when the install is done by an accredited installer to the required standard. Every installer we match you with meets that bar.</p></div>
-  </div>
-</div></section>
-
-<!-- WHY -->
-<section class="sec alt"><div class="wrap">
-  <div class="sec-head">
-    <div class="sec-eyebrow">Why AU Solar Quotes</div>
-    <h2 class="sec-title">Everything a good quote should be, nothing it shouldn't</h2>
-    <p class="sec-sub">No call-centres. No handing your number to five companies. One vetted local installer, matched to your postcode, and that's it.</p>
-  </div>
-  <div class="assure">
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>One installer per postcode, never shared or resold</div>
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Only qualified, accredited installers, vetted before they join</div>
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Your details go to your one match, and nobody else</div>
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>100% free, obligation-free, no lock-in</div>
-    <div class="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>If no one covers your postcode yet, we tell you upfront</div>
-  </div>
-</div></section>
-
-<!-- FAQ -->
-<section class="sec" id="faq"><div class="wrap">
-  <div class="sec-head mid">
-    <div class="sec-eyebrow">FAQ</div>
-    <h2 class="sec-title">Questions, answered</h2>
-  </div>
-  <div class="faq-wrap">
-    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Is this really free? What's the catch?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Genuinely free for homeowners. We're paid by the installer you're matched with, not by you, and it never changes the price you're quoted. The matching service costs you nothing, with zero obligation.</div></div></div>
-    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Why one installer instead of three competing quotes?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Because being hounded by five salespeople is a miserable experience. We match you exclusively with one top-rated installer for your area. They get your enquiry exclusively, so they're more invested in doing right by you. Not happy after speaking to them? Come back and we'll find an alternative.</div></div></div>
-    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Are the installers actually accredited?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Yes. Every installer in the network is a qualified, accredited professional. Accreditation is the standard required to install systems that qualify for government solar incentives, and it's non-negotiable for us.</div></div></div>
-    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Do I qualify for solar rebates?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Most owner-occupied homes are eligible for government solar incentives, but it depends on your property, system and current program rules. Your matched installer confirms exactly what you qualify for as part of the quote, so there are no surprises.</div></div></div>
-    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">How much does solar cost?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>It depends on system size, your roof and how much power you use. After government incentives a typical home system is a mid four-figure investment, but the only accurate number is a quote for your specific property, which your matched installer provides free.</div></div></div>
-    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">How long does installation take?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Most residential solar installations are completed in a single day once paperwork and grid approval are sorted. Your matched installer walks you through the exact timeline for your property.</div></div></div>
-    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">How soon will I hear back?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Usually within one business day. Once you're matched, your local installer reaches out directly to talk through your options and put together an obligation-free quote.</div></div></div>
-    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">What areas do you cover?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>We match by postcode. If a vetted installer covers your area, you'll go straight through. If nobody covers your postcode yet, we'll tell you upfront rather than waste your time. We're adding installers all the time.</div></div></div>
-  </div>
-</div></section>
-
-<!-- CLOSING CTA -->
-<section class="sec" style="padding-top:0"><div class="wrap">
-  <div class="cta-band">
-    <div>
-      <h2>Ready for a straight-up solar quote?</h2>
-      <p>One short form, one trusted local installer, zero call-centre run-around.</p>
-    </div>
-    <a href="#quote">Get my free quote</a>
+    <div class="r"><div class="num">Step 01</div><h3>Answer four questions</h3><p>Ownership, your power bill, your timing and your postcode. No account needed.</p></div>
+    <div class="r"><div class="num">Step 02</div><h3>We find your installer</h3><p>We check which accredited installer covers your postcode. If nobody does yet, we tell you straight away.</p></div>
+    <div class="r"><div class="num">Step 03</div><h3>Get your free quote</h3><p>They contact you, usually within one business day, with an obligation-free quote.</p></div>
   </div>
 </div></section>
 
@@ -652,6 +572,53 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
   </div>
 </div></section>
 <!-- @end-local -->
+
+<!-- WHAT DRIVES THE COST (depth) -->
+<section class="sec alt" id="costs"><div class="wrap">
+  <div class="sec-head">
+    <div class="sec-eyebrow">What size system?</div>
+    <h2 class="sec-title">What size system fits your bill</h2>
+    <p class="sec-sub">Typical starting points. Your installer confirms the right size for your roof and usage.</p>
+  </div>
+  <table class="dtable">
+    <thead><tr><th scope="col">Quarterly bill</th><th scope="col">System size usually discussed</th><th scope="col">What it tends to suit</th></tr></thead>
+    <tbody>
+      <tr><td>Under $300</td><td>3 - 5 kW</td><td>Smaller households, low daytime use, unit or townhouse roofs</td></tr>
+      <tr><td>$300 - $600</td><td>5 - 6.6 kW</td><td>The most common family-home range in Australia</td></tr>
+      <tr><td>$600 - $1,000</td><td>6.6 - 10 kW</td><td>Larger homes, pool pumps, ducted air conditioning</td></tr>
+      <tr><td>Over $1,000</td><td>10 kW+ or solar plus battery</td><td>High daytime use, electric vehicles, home offices, acreage</td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+<!-- FAQ -->
+<section class="sec" id="faq"><div class="wrap">
+  <div class="sec-head mid">
+    <div class="sec-eyebrow">FAQ</div>
+    <h2 class="sec-title">Questions, answered</h2>
+  </div>
+  <div class="faq-wrap">
+    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Is this really free? What's the catch?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Genuinely free for homeowners. We're paid by the installer you're matched with, not by you, and it never changes the price you're quoted. The matching service costs you nothing, with zero obligation.</div></div></div>
+    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Why one installer instead of three competing quotes?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Because being hounded by five salespeople is a miserable experience. We match you exclusively with one top-rated installer for your area. They get your enquiry exclusively, so they're more invested in doing right by you. Not happy after speaking to them? Come back and we'll find an alternative.</div></div></div>
+    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Are the installers actually accredited?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Yes. Every installer in the network is a qualified, accredited professional. Accreditation is the standard required to install systems that qualify for government solar incentives, and it's non-negotiable for us.</div></div></div>
+    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Do I qualify for solar rebates?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Most owner-occupied homes are eligible for government solar incentives, but it depends on your property, system and current program rules. Your matched installer confirms exactly what you qualify for as part of the quote, so there are no surprises.</div></div></div>
+    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">How much does solar cost?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>It depends on system size, your roof and how much power you use. After government incentives a typical home system is a mid four-figure investment, but the only accurate number is a quote for your specific property, which your matched installer provides free.</div></div></div>
+    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">How long does installation take?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Most residential solar installations are completed in a single day once paperwork and grid approval are sorted. Your matched installer walks you through the exact timeline for your property.</div></div></div>
+    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">How soon will I hear back?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>Usually within one business day. Once you're matched, your local installer reaches out directly to talk through your options and put together an obligation-free quote.</div></div></div>
+    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">What areas do you cover?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div>We match by postcode. If a vetted installer covers your area, you'll go straight through. If nobody covers your postcode yet, we'll tell you upfront rather than waste your time. We're adding installers all the time.</div></div></div>
+  </div>
+</div></section>
+
+<!-- CLOSING CTA -->
+<section class="sec" style="padding-top:0"><div class="wrap">
+  <div class="cta-band">
+    <div>
+      <h2>Get your free solar quote</h2>
+      <p>About 60 seconds. One local installer. Never resold.</p>
+    </div>
+    <a href="#quote">Get my free quote</a>
+  </div>
+</div></section>
 
 <!-- @tier1-areas -->
 <section class="sec"><div class="wrap">

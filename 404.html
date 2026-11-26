@@ -362,6 +362,17 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
   .mobile-cta.hide{transform:translateY(140%);opacity:0;pointer-events:none}
   .mobile-cta{background:var(--go) !important;color:var(--ink) !important;border-radius:999px !important}
 
+  /* battery pages: their own sheet loads later, so these need the extra 'body' weight */
+  body .bt-btn{background:var(--go);color:var(--ink) !important;border-radius:999px;box-shadow:0 10px 24px -12px rgba(var(--glow),1)}
+  body .bt-btn:hover{background:var(--go-d)}
+  body .bt-deadline{border-radius:var(--r-lg);border:1px solid rgba(var(--glow),.55);box-shadow:0 0 50px -18px rgba(var(--glow),.55),0 20px 40px -30px rgba(6,20,15,.5)}
+  body .bt-count div{border-radius:10px}
+  body .bt-stats,body .bt-steps{gap:14px;border:none;overflow:visible;background:none}
+  body .bt-stats>div,body .bt-steps>div{background:#fff;border:1px solid var(--line) !important;border-radius:var(--r-lg);box-shadow:0 12px 30px -24px rgba(6,20,15,.45)}
+  body .bt-steps>div::before{content:'';display:block;width:36px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--go));margin-bottom:16px}
+  body .bt-steps .n{color:var(--accent);padding:0;border:0 !important}
+  body .bt-calc{border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:0 18px 40px -30px rgba(6,20,15,.5)}
+  body .bt-card,body .bt-areas a{border-radius:var(--r-lg)}
   @media(max-width:960px){
     /* form first on phones: headline, one line, then the card */
     .hero-copy{display:contents}
@@ -402,12 +413,12 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
   <div class="wrap nav">
     <a href="/" class="brand" aria-label="AU Solar Quotes home"><img src="/au-solar-quotes-logo.png" alt="AU Solar Quotes" width="675" height="150"></a>
     <nav class="navlinks">
-      <a href="#how">How it works</a>
-      <a href="#costs">What it costs</a>
-      <a href="#rebates">Rebates</a>
-      <a href="#faq">FAQ</a>
+      <a href="/#how">How it works</a>
+      <a href="/#costs">What it costs</a>
+      <a href="/#faq">FAQ</a>
+      <a href="/battery/">Batteries</a>
     </nav>
-    <a href="#quote" class="cta">Get my quote</a>
+    <a href="/#quote" class="cta">Get my quote</a>
   </div>
 </header>
 
