@@ -397,6 +397,12 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
     .card-body{padding:16px 18px 18px}
   }
 /* @end-look-css */
+/* @photo-css */
+  .how-top{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(24px,4vw,48px);align-items:center;margin-bottom:38px}
+  .how-top .sec-head{margin-bottom:0}
+  .how-photo img{display:block;width:100%;height:auto;border-radius:var(--r-lg);box-shadow:0 24px 50px -30px rgba(6,20,15,.55)}
+  @media(max-width:960px){ .how-top{grid-template-columns:1fr;gap:22px;margin-bottom:28px} }
+/* @end-photo-css */
 </style>
 <!-- @assets -->
 <link rel="icon" href="/favicon.ico" sizes="32x32">
@@ -535,10 +541,16 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
 
 <!-- HOW IT WORKS -->
 <section class="sec" id="how"><div class="wrap">
-  <div class="sec-head">
-    <div class="sec-eyebrow">How it works</div>
-    <h2 class="sec-title">Matched in three steps</h2>
-    <p class="sec-sub">Most quote sites sell your number to several installers. We match you with one.</p>
+  <div class="how-top">
+    <div class="sec-head">
+      <div class="sec-eyebrow">How it works</div>
+      <h2 class="sec-title">Matched in three steps</h2>
+      <p class="sec-sub">Most quote sites sell your number to several installers. We match you with one.</p>
+    </div>
+    <picture class="how-photo">
+      <source srcset="/solar-sunset-au-solar-quotes.webp" type="image/webp">
+      <img src="/solar-sunset-au-solar-quotes.jpg" alt="Solar panels on the roof of an Australian home at sunset" width="1080" height="600" loading="lazy" decoding="async">
+    </picture>
   </div>
   <div class="rail">
     <div class="r"><div class="num">Step 01</div><h3>Answer four questions</h3><p>Ownership, your power bill, your timing and your postcode. No account needed.</p></div>
