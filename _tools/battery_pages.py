@@ -12,7 +12,7 @@ form plumbing exactly as they are. What changes:
   * hero      - battery copy, 6-step form (adds "do you already have solar?")
   * body      - rebate education, countdown, calculator, local battery notes
   * links     - nearby-area and footer links point at /battery/<slug>/
-  * script    - NICHE='battery' so submit-lead routes to battery engines,
+  * script    - NICHE='battery' (battery_retrofit on au-solar-quotes) so submit-lead routes to battery engines,
                 plus has_solar / battery_project (land in leads.extra)
 
 The rebate figures are the Cheaper Home Batteries Program schedule as of
@@ -821,7 +821,12 @@ def build(brand, src_html, slug, national):
              lambda m: m.group(1) + 'Battery rebate figures are general estimates based on the federal Cheaper Home Batteries Program schedule as published in October 2026 and an approximate certificate value; the discount that applies is set by your installation date and confirmed by your installer on the quote. State incentives change and are confirmed at the time of sale.' + m.group(4), h, label='footer fine print')
 
     # ---- script ----
-    h = rep("var NICHE             = 'solar';", "var NICHE             = 'battery';", h)
+    # au-solar-quotes posts to ql-mc (cws-site's backend), whose niches are
+    # solar_and_battery / battery_retrofit; the other brands still use solar / battery.
+    if "var NICHE             = 'solar_and_battery';" in h:
+        h = rep("var NICHE             = 'solar_and_battery';", "var NICHE             = 'battery_retrofit';", h)
+    else:
+        h = rep("var NICHE             = 'solar';", "var NICHE             = 'battery';", h)
     h = rep('var TOTAL_STEPS = 5;', 'var TOTAL_STEPS = 6;', h)
     h = rep("var STEP_NAMES = {1:'ownership',2:'quarterly_bill',3:'timeline',4:'postcode',5:'contact'};",
             "var STEP_NAMES = {1:'ownership',2:'existing_solar',3:'quarterly_bill',4:'timeline',5:'postcode',6:'contact'};", h)
@@ -831,8 +836,11 @@ def build(brand, src_html, slug, national):
              "function pickBill(el,v){ document.querySelectorAll('#step3 .choice-h').forEach(b=>b.classList.remove('selected')); el.classList.add('selected'); fd.avg_quarterly_bill=v; setTimeout(()=>goToStep(3,4),260); }\n"
              "function pickTimeline(el,v){ document.querySelectorAll('#step4 .choice-h').forEach(b=>b.classList.remove('selected')); el.classList.add('selected'); fd.purchase_timeline=v; setTimeout(()=>goToStep(4,5),260); }\n", h)
     h = rep('/* ─── STEP 4: POSTCODE + LOOKUP ─── */', '/* ─── STEP 5: POSTCODE + LOOKUP ─── */', h)
-    if h.count('goToStep(4,5),450)') != 3:
-        raise SystemExit('expected three postcode advances in %s/%s' % (brand, slug))
+    # three advances on the older forms; one on the ql-mc forms, which stop when
+    # no installer covers the postcode
+    if h.count('goToStep(4,5),450)') not in (1, 3):
+        raise SystemExit('expected one or three postcode advances in %s/%s' % (brand, slug))
+    h = h.replace('if(!fd.matched_buyer){ goToStep(5,4); return; }', 'if(!fd.matched_buyer){ goToStep(6,5); return; }')
     h = h.replace('goToStep(4,5),450)', 'goToStep(5,6),450)')
     h = rep('/* ─── STEP 5: VALIDATION ─── */', '/* ─── STEP 6: VALIDATION ─── */', h)
     h = rep("' about my solar enquiry. My details are shared only with that one installer.'",

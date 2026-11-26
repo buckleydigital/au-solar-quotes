@@ -643,16 +643,17 @@ src="https://www.facebook.com/tr?id=1645419089889035&ev=PageView&noscript=1"
 </footer>
 <script>
 /* ─── CONFIG ─── */
-var SUPABASE_URL      = 'https://tgujjtllrrhpwkcmmqap.supabase.co';
-var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRndWpqdGxscnJocHdrY21tcWFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0MDIwNTksImV4cCI6MjA5OTk3ODA1OX0.Fu31FBRmqXXc14hjABpmKU0ctlj1CX8fgVhDYZ4yjJA';
+var SUPABASE_URL      = 'https://wmegoygrancfwxagqskh.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_UHQNxVCjHJnFjssYwTiwcQ_3FYovX8I';
 var BRAND_DOMAIN      = 'ausolarquotes.com.au';
 var BRAND_NAME        = 'AU Solar Quotes';
-var NICHE             = 'solar';
+var NICHE             = 'solar_and_battery';
+var SOURCE            = 'QUOTELEADS PPL';
 var SUBMIT_LEAD_URL     = SUPABASE_URL + '/functions/v1/submit-lead';
 var POSTCODE_LOOKUP_URL = SUPABASE_URL + '/functions/v1/postcode-lookup';
 var TOTAL_STEPS = 5;
 var AUTH = { 'Authorization':'Bearer '+SUPABASE_ANON_KEY, 'apikey':SUPABASE_ANON_KEY, 'Content-Type':'application/json' };
-var fd = { source:BRAND_NAME };
+var fd = { source:SOURCE };
 /* @ga-events */
 /* GA4 funnel events. Safe no-op when gtag is blocked or absent. */
 var STEP_NAMES = {1:'ownership',2:'quarterly_bill',3:'timeline',4:'postcode',5:'contact'};
@@ -700,10 +701,24 @@ function pickBill(el,v){ document.querySelectorAll('#step2 .choice-h').forEach(b
 function pickTimeline(el,v){ document.querySelectorAll('#step3 .choice-h').forEach(b=>b.classList.remove('selected')); el.classList.add('selected'); fd.purchase_timeline=v; setTimeout(()=>goToStep(3,4),260); }
 
 /* ─── STEP 4: POSTCODE + LOOKUP ─── */
+/* Same coverage check as cws-site: ask ql-mc which installer is taking leads for
+   this postcode BEFORE the contact step, so the consent sentence names that
+   business. submit-lead routes on the name in the consent text, so a lead must
+   never be taken without one - no installer means no contact step. */
 function onPostcodeTyping(){
   var err=document.getElementById('err-postcode'); if(err)err.style.display='none';
   document.getElementById('postcode').classList.remove('err-field');
   if(document.getElementById('postcode').value.length<4) document.getElementById('suburb-chip').style.display='none';
+}
+function postcodeStop(msg,chipText){
+  var pcEl=document.getElementById('postcode'), errEl=document.getElementById('err-postcode'),
+      btn=document.getElementById('postcodeBtn'), chip=document.getElementById('suburb-chip');
+  fd.matched_buyer=null;
+  chip.className='suburb-chip no-coverage'; chip.style.display='inline-flex';
+  document.getElementById('suburb-text').textContent=chipText;
+  pcEl.classList.add('err-field');
+  errEl.textContent=msg; errEl.style.display='block';
+  btn.textContent='Find my local installer →'; btn.disabled=false;
 }
 async function submitPostcode(){
   var pcEl=document.getElementById('postcode'), errEl=document.getElementById('err-postcode'),
@@ -715,41 +730,28 @@ async function submitPostcode(){
   document.getElementById('suburb-text').textContent='Checking installers near you…';
   errEl.style.display='none'; pcEl.classList.remove('err-field');
   fd.postcode=pc;
+  var d=null;
   try{
-    var r=await fetch(POSTCODE_LOOKUP_URL+'?postcode='+encodeURIComponent(pc)+'&niche='+encodeURIComponent(NICHE)+'&brand_domain='+encodeURIComponent(BRAND_DOMAIN),{headers:AUTH});
-    var d=r.ok?await r.json():{};
-    if(d.buyer_name){
-      // matched: throw back the real installer's business name and continue
-      fd.matched_buyer=d.buyer_name;
-      document.getElementById('buyerName').textContent=d.buyer_name;
-      document.getElementById('consentBuyerName').textContent=d.buyer_name;
-      chip.className='suburb-chip found';
-      document.getElementById('suburb-text').textContent='✓ '+d.buyer_name+' covers your area';
-      track('postcode_result', { result:'matched', matched:true });
-      setTimeout(()=>goToStep(4,5),450);
-      return;   // stays disabled while advancing
-    }
-    // no installer covers this postcode YET: don't stop them - take the details
-    // anyway. Consent stays generic (names nobody), so the server holds the lead
-    // as pending and only delivers if/when a local installer covers the area.
-    fd.matched_buyer=null;
-    document.getElementById('consentBuyerName').textContent='a qualified, accredited installer';
+    var r=await fetch(POSTCODE_LOOKUP_URL+'?postcode='+encodeURIComponent(pc)+'&niche='+encodeURIComponent(NICHE),{headers:AUTH});
+    d=r.ok?await r.json():null;
+  }catch(e){ console.warn('postcode-lookup:',e); }
+  if(d && d.buyer_name){
+    fd.matched_buyer=d.buyer_name;
+    document.getElementById('buyerName').textContent=d.buyer_name;
+    document.getElementById('consentBuyerName').textContent=d.buyer_name;
     chip.className='suburb-chip found';
-    document.getElementById('suburb-text').textContent='✓ Got it - we\'ll match you as soon as an installer covers your area';
-    track('postcode_result', { result:'pending_coverage', matched:false });
+    document.getElementById('suburb-text').textContent='✓ '+d.buyer_name+' covers your area';
+    track('postcode_result', { result:'matched', matched:true });
     setTimeout(()=>goToStep(4,5),450);
-    return;
-  }catch(e){
-    // lookup failed - still let them through; the server makes the final call.
-    fd.matched_buyer=null;
-    document.getElementById('consentBuyerName').textContent='a qualified, accredited installer';
-    chip.className='suburb-chip found';
-    document.getElementById('suburb-text').textContent='✓ Got it - checking installer coverage for your area';
-    track('postcode_result', { result:'lookup_failed', matched:false });
-    setTimeout(()=>goToStep(4,5),450);
+    return;   // stays disabled while advancing
+  }
+  if(d){
+    track('postcode_result', { result:'no_coverage', matched:false });
+    postcodeStop("We don't have an installer covering that postcode yet - try a neighbouring postcode.",'No installer found for this postcode');
     return;
   }
-  btn.textContent='Find my local installer →'; btn.disabled=false;
+  track('postcode_result', { result:'lookup_failed', matched:false });
+  postcodeStop("We couldn't check installers for your area just now. Please try again.",'Couldn\'t check your area');
 }
 
 /* ─── AU mobile normalizer ─── */
@@ -771,67 +773,42 @@ function buildConsent(){
     ' about my solar enquiry. My details are shared only with that one installer.';
 }
 
-/* ─── persistent visitor identity (server does the enforcement) ─── */
-function visitorId(){
-  try{
-    var k='lgr_vid', v=localStorage.getItem(k);
-    if(!v){ v=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2)); localStorage.setItem(k,v); }
-    return v;
-  }catch(e){ return null; }
-}
-function deviceHash(){
-  try{
-    var parts=[navigator.userAgent,navigator.language,(screen.width+'x'+screen.height+'x'+screen.colorDepth),
-      new Date().getTimezoneOffset(),(navigator.hardwareConcurrency||''),(navigator.platform||''),(navigator.deviceMemory||'')];
-    try{ var c=document.createElement('canvas'),x=c.getContext('2d'); x.textBaseline='top'; x.font='14px Arial'; x.fillStyle='#069'; x.fillText('lgr-fp-7',2,2); parts.push(c.toDataURL()); }catch(e){}
-    var s=parts.join('|'),h=5381; for(var i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))>>>0; }
-    return 'd'+h.toString(16);
-  }catch(e){ return null; }
-}
-
-/* ─── SUBMIT: real-number check + anti-spam happen server-side in submit-lead ─── */
+/* ─── SUBMIT: ql-mc submit-lead (same backend as cws-site) ─── */
 async function submitForm(){
   var ok=true;
   ok=fv('firstName',v=>v.length>1)&&ok; ok=fv('lastName',v=>v.length>1)&&ok;
   ok=fv('phone',v=>normAu(v)!==null)&&ok; ok=fv('email',v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))&&ok;
   if(!ok||!document.getElementById('consent').checked) return;
+  // The consent sentence must name the installer the lookup returned.
+  if(!fd.matched_buyer){ goToStep(5,4); return; }
 
   fd.first_name=document.getElementById('firstName').value.trim();
   fd.last_name =document.getElementById('lastName').value.trim();
   fd.email     =document.getElementById('email').value.trim();
   fd.phone     =normAu(document.getElementById('phone').value);
 
+  // Honeypot filled = bot: show the normal success screen, send nothing.
+  if(document.getElementById('website').value){ showSuccess(); return; }
+
   var payload={
-    brand_domain:BRAND_DOMAIN, niche:NICHE, source:BRAND_NAME,
+    niche:NICHE, source:SOURCE,
     first_name:fd.first_name, last_name:fd.last_name, name:fd.first_name+' '+fd.last_name,
     email:fd.email, phone:fd.phone, postcode:fd.postcode,
     is_homeowner:fd.is_homeowner, ownership_type:fd.ownership_type||null,
     avg_quarterly_bill:fd.avg_quarterly_bill||null, purchase_timeline:fd.purchase_timeline||null,
-    matched_buyer:fd.matched_buyer||null,
-    consent_text:buildConsent(),
-    website:document.getElementById('website').value,   // honeypot
-    elapsed_ms:Date.now()-FORM_T0,                       // time-to-complete
-    fingerprint:visitorId(),                             // persistent visitor id
-    device_hash:deviceHash()                             // device signals
+    matched_buyer:fd.matched_buyer,
+    consent_text:buildConsent()
   };
 
   var btn=document.getElementById('submitBtn'),
       perr=document.getElementById('err-phone'),
       ferr=document.getElementById('err-form');
   ferr.style.display='none';
-  btn.textContent='Checking your number…'; btn.disabled=true;
-  var dropped=false;   // set when the server silently drops this as spam
+  btn.textContent='Matching you now…'; btn.disabled=true;
   try{
     var r=await fetch(SUBMIT_LEAD_URL,{method:'POST',headers:AUTH,body:JSON.stringify(payload)});
     var d=await r.json().catch(function(){return{};});
-    if(r.status===429 || (d && d.error==='too_many_requests')){
-      ferr.textContent='You\'ve recently submitted a request. Please try again later.';
-      track('form_error', { reason:'rate_limited' });
-      ferr.style.display='block';
-      btn.textContent='Get my free quote →'; btn.disabled=false;
-      return;
-    }
-    if(d && d.error==='invalid_phone_number'){
+    if(d && d.error==='invalid_phone'){
       document.getElementById('phone').classList.add('err-field');
       perr.textContent='That doesn\'t look like a real Australian mobile. Please double-check it.';
       track('form_error', { reason:'invalid_phone' });
@@ -839,39 +816,24 @@ async function submitForm(){
       btn.textContent='Get my free quote →'; btn.disabled=false;
       return;
     }
-    // Silent drop - honeypot filled, submitted too fast, or a disposable email.
-    // The server returns a fake 200 so the bot learns nothing it can adapt to,
-    // and stored:false is the only tell. Show the identical success screen, but
-    // skip the raw capture and the GA conversion below: spam must never reach
-    // lead_submissions, which is meant to be the trustworthy backup of real
-    // submissions. Strict ===false - a matched lead carries no `stored` field.
-    if(d && d.stored===false) dropped=true;
-    // any other outcome (matched, out-of-area) → show success
-  }catch(e){ console.warn('submit-lead:',e); }
-  // Guaranteed raw capture (cws-style): direct insert so a genuine lead is never
-  // lost even if routing hiccups. Fire-and-forget. Skipped entirely for spam the
-  // server already dropped - and skipped on a network error too, since `dropped`
-  // stays false there, preserving the safety net for real submissions.
-  if(!dropped){
-  fetch(SUPABASE_URL+'/rest/v1/lead_submissions',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Prefer':'return=minimal'},
-    body:JSON.stringify({
-      brand_domain:BRAND_DOMAIN, niche:NICHE, source:BRAND_NAME,
-      first_name:fd.first_name, last_name:fd.last_name, name:fd.first_name+' '+fd.last_name,
-      email:fd.email, phone:fd.phone, postcode:fd.postcode,
-      is_homeowner:fd.is_homeowner, ownership_type:fd.ownership_type||null,
-      purchase_timeline:fd.purchase_timeline||null, avg_quarterly_bill:fd.avg_quarterly_bill||null,
-      matched_buyer:fd.matched_buyer||null, consent_text:buildConsent()
-    })
-  }).catch(function(e){ console.warn('capture:',e); });
-  track('generate_lead', { matched: !!fd.matched_buyer });
-  /* Meta Pixel conversion. Fires for every genuine lead - matched or held for
-     coverage alike. Whether an installer currently rents the area is a delivery
-     question, not a conversion one, so it must never gate the pixel. Guarded so
-     a blocked/absent fbq is a silent no-op. */
-  try{ if(typeof fbq==='function') fbq('track','Lead',{content_category:NICHE, content_name:BRAND_NAME, matched: !!fd.matched_buyer}); }catch(e){}
+    if(!r.ok){
+      ferr.textContent='Something went wrong sending your details. Please try again.';
+      track('form_error', { reason:'submit_failed' });
+      ferr.style.display='block';
+      btn.textContent='Get my free quote →'; btn.disabled=false;
+      return;
+    }
+    // success, or status:'duplicate' (already received this week) → success screen
+  }catch(e){
+    console.warn('submit-lead:',e);
+    ferr.textContent='We couldn\'t reach our server. Check your connection and try again.';
+    track('form_error', { reason:'network' });
+    ferr.style.display='block';
+    btn.textContent='Get my free quote →'; btn.disabled=false;
+    return;
   }
+  track('generate_lead', { matched:true });
+  try{ if(typeof fbq==='function') fbq('track','Lead',{content_category:NICHE, content_name:BRAND_NAME, matched:true}); }catch(e){}
   showSuccess();
 }
 function showSuccess(){
